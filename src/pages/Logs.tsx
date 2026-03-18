@@ -1,4 +1,5 @@
-import { logEventos, transformadores } from '@/lib/mock-data';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 
 const tipoColors: Record<string, string> = {
@@ -10,7 +11,23 @@ const tipoColors: Record<string, string> = {
 };
 
 export default function Logs() {
-  const sorted = [...logEventos].sort((a, b) => new Date(b.data_hora).getTime() - new Date(a.data_hora).getTime());
+  const { data: logEventos = [] } = useQuery({
+    queryKey: ['log_eventos'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('log_eventos').select('*').order('data_hora', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: transformadores = [] } = useQuery({
+    queryKey: ['transformadores'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('transformadores').select('id, numero_serie');
+      if (error) throw error;
+      return data;
+    },
+  });
 
   return (
     <div className="max-w-4xl">
@@ -20,7 +37,8 @@ export default function Logs() {
       </div>
 
       <div className="space-y-3">
-        {sorted.map((log, i) => {
+        {logEventos.length === 0 && <p className="text-sm text-muted-foreground">Nenhum evento registrado.</p>}
+        {logEventos.map((log, i) => {
           const transformer = transformadores.find(t => t.id === log.id_transformador);
           return (
             <motion.div
