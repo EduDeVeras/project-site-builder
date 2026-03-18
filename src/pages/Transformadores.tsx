@@ -1,12 +1,23 @@
 import { useState } from 'react';
-import { transformadores as initialData } from '@/lib/mock-data';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import StatusBadge from '@/components/StatusBadge';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 
 export default function Transformadores() {
   const [search, setSearch] = useState('');
-  const filtered = initialData.filter(t =>
+
+  const { data: transformadores = [] } = useQuery({
+    queryKey: ['transformadores'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('transformadores').select('*');
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const filtered = transformadores.filter(t =>
     t.numero_serie.toLowerCase().includes(search.toLowerCase()) ||
     t.modelo.toLowerCase().includes(search.toLowerCase())
   );
@@ -16,7 +27,7 @@ export default function Transformadores() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">Transformadores</h2>
-          <p className="text-sm text-muted-foreground mt-1">{initialData.length} equipamentos cadastrados</p>
+          <p className="text-sm text-muted-foreground mt-1">{transformadores.length} equipamentos cadastrados</p>
         </div>
         <Input
           placeholder="Buscar por série ou modelo..."
@@ -56,8 +67,8 @@ export default function Transformadores() {
                 <td className="px-4 py-3 text-sm">{t.modelo}</td>
                 <td className="px-4 py-3 text-sm font-mono">{t.potencia_kva} kVA</td>
                 <td className="px-4 py-3 text-sm font-mono">{t.tensao_nominal.toLocaleString()} V</td>
-                <td className={`px-4 py-3 text-sm font-mono ${t.temperatura_teste > 85 ? 'text-destructive font-semibold' : ''}`}>
-                  {t.temperatura_teste}°C
+                <td className={`px-4 py-3 text-sm font-mono ${Number(t.temperatura_teste) > 85 ? 'text-destructive font-semibold' : ''}`}>
+                  {Number(t.temperatura_teste)}°C
                 </td>
                 <td className="px-4 py-3 text-sm text-muted-foreground">
                   {new Date(t.data_teste).toLocaleDateString('pt-BR')}

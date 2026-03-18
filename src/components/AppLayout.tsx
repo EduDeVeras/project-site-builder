@@ -3,8 +3,9 @@ import { useAuth } from '@/lib/auth-context';
 import AppSidebar from './AppSidebar';
 
 export default function AppLayout() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
+  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Carregando...</div>;
   if (!user) return <Navigate to="/login" replace />;
 
   return (

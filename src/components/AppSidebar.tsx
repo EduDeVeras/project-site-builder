@@ -61,7 +61,7 @@ export default function AppSidebar() {
           </div>
         </div>
         <button
-          onClick={logout}
+          onClick={() => logout()}
           className="w-full text-left text-xs text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors px-3 py-1.5"
         >
           Sair do sistema
