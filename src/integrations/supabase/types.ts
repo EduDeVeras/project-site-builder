@@ -14,16 +14,182 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      dados_sensores: {
+        Row: {
+          id: number
+          id_transformador: number
+          temperatura: number
+          timestamp: string
+        }
+        Insert: {
+          id?: never
+          id_transformador: number
+          temperatura: number
+          timestamp?: string
+        }
+        Update: {
+          id?: never
+          id_transformador?: number
+          temperatura?: number
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dados_sensores_id_transformador_fkey"
+            columns: ["id_transformador"]
+            isOneToOne: false
+            referencedRelation: "transformadores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      log_eventos: {
+        Row: {
+          data_hora: string
+          descricao: string
+          id: number
+          id_transformador: number
+          tipo_evento: Database["public"]["Enums"]["tipo_evento"]
+        }
+        Insert: {
+          data_hora?: string
+          descricao: string
+          id?: never
+          id_transformador: number
+          tipo_evento: Database["public"]["Enums"]["tipo_evento"]
+        }
+        Update: {
+          data_hora?: string
+          descricao?: string
+          id?: never
+          id_transformador?: number
+          tipo_evento?: Database["public"]["Enums"]["tipo_evento"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "log_eventos_id_transformador_fkey"
+            columns: ["id_transformador"]
+            isOneToOne: false
+            referencedRelation: "transformadores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          updated_at: string
+          user_id: string
+          usuario: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          updated_at?: string
+          user_id: string
+          usuario: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          updated_at?: string
+          user_id?: string
+          usuario?: string
+        }
+        Relationships: []
+      }
+      transformadores: {
+        Row: {
+          created_at: string
+          data_teste: string
+          id: number
+          modelo: string
+          numero_serie: string
+          potencia_kva: number
+          status_producao: Database["public"]["Enums"]["status_producao"]
+          temperatura_teste: number
+          tensao_nominal: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_teste?: string
+          id?: never
+          modelo: string
+          numero_serie: string
+          potencia_kva: number
+          status_producao?: Database["public"]["Enums"]["status_producao"]
+          temperatura_teste?: number
+          tensao_nominal: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_teste?: string
+          id?: never
+          modelo?: string
+          numero_serie?: string
+          potencia_kva?: number
+          status_producao?: Database["public"]["Enums"]["status_producao"]
+          temperatura_teste?: number
+          tensao_nominal?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "tecnico" | "engenheiro" | "operador"
+      status_producao:
+        | "Em Teste"
+        | "Aprovado"
+        | "Em Manutenção"
+        | "Em Produção"
+        | "Reprovado"
+      tipo_evento:
+        | "ALERTA TEMPERATURA"
+        | "MANUTENÇÃO"
+        | "APROVAÇÃO"
+        | "CADASTRO"
+        | "STATUS"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +316,22 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["tecnico", "engenheiro", "operador"],
+      status_producao: [
+        "Em Teste",
+        "Aprovado",
+        "Em Manutenção",
+        "Em Produção",
+        "Reprovado",
+      ],
+      tipo_evento: [
+        "ALERTA TEMPERATURA",
+        "MANUTENÇÃO",
+        "APROVAÇÃO",
+        "CADASTRO",
+        "STATUS",
+      ],
+    },
   },
 } as const
